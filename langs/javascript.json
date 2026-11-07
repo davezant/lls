@@ -1,0 +1,251 @@
+{
+  "name": "javascript",
+  "description": "JavaScript and TypeScript. Index node_modules (TypeScript .d.ts declarations) and node built-ins via scripts/introspect/node.js.",
+  "languageIds": [
+    "javascript",
+    "typescript",
+    "javascriptreact",
+    "typescriptreact"
+  ],
+  "extensions": [
+    ".js",
+    ".mjs",
+    ".cjs",
+    ".jsx",
+    ".ts",
+    ".mts",
+    ".cts",
+    ".tsx"
+  ],
+  "source": {
+    "extensions": [
+      ".d.ts",
+      ".d.mts",
+      ".d.cts"
+    ],
+    "excludeDirs": [
+      "test",
+      "tests",
+      "__tests__",
+      "node_modules",
+      ".*"
+    ]
+  },
+  "module": {
+    "mode": "package",
+    "separator": "/",
+    "dropSegments": [
+      "@types"
+    ],
+    "declared": "^\\s*declare\\s+module\\s+['\\\"](?P<module>[^'\\\"]+)['\\\"]",
+    "importStrip": "^node:"
+  },
+  "visibility": "all",
+  "lineComments": [
+    "//"
+  ],
+  "blockComment": [
+    "/*",
+    "*/"
+  ],
+  "identExtra": "$",
+  "memberSeparators": [
+    "."
+  ],
+  "keywords": [
+    "async",
+    "await",
+    "break",
+    "case",
+    "catch",
+    "class",
+    "const",
+    "continue",
+    "debugger",
+    "default",
+    "delete",
+    "do",
+    "else",
+    "enum",
+    "export",
+    "extends",
+    "false",
+    "finally",
+    "for",
+    "function",
+    "if",
+    "import",
+    "in",
+    "instanceof",
+    "let",
+    "new",
+    "null",
+    "return",
+    "static",
+    "super",
+    "switch",
+    "this",
+    "throw",
+    "true",
+    "try",
+    "typeof",
+    "undefined",
+    "var",
+    "void",
+    "while",
+    "with",
+    "yield",
+    "interface",
+    "type",
+    "implements",
+    "private",
+    "protected",
+    "public",
+    "readonly",
+    "declare",
+    "namespace",
+    "abstract",
+    "as",
+    "of"
+  ],
+  "autoload": [
+    "globals"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "pattern": "^\\s*export\\s+(?:default\\s+)?(?:declare\\s+)?(?:abstract\\s+)?class\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "class",
+      "scope": "top",
+      "opens": true
+    },
+    {
+      "kind": "interface",
+      "pattern": "^\\s*export\\s+(?:declare\\s+)?interface\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "interface",
+      "scope": "top",
+      "opens": true
+    },
+    {
+      "kind": "function",
+      "pattern": "^\\s*export\\s+(?:default\\s+)?(?:declare\\s+)?(?:async\\s+)?function\\s*\\*?\\s*(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "function",
+      "scope": "top",
+      "continueUntil": ";{"
+    },
+    {
+      "kind": "constant",
+      "pattern": "^\\s*export\\s+(?:declare\\s+)?const\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "const",
+      "scope": "top"
+    },
+    {
+      "kind": "variable",
+      "pattern": "^\\s*export\\s+(?:declare\\s+)?(?:let|var)\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "export",
+      "scope": "top"
+    },
+    {
+      "kind": "enum",
+      "pattern": "^\\s*export\\s+(?:declare\\s+)?(?:const\\s+)?enum\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "enum",
+      "scope": "top"
+    },
+    {
+      "kind": "class",
+      "pattern": "^\\s*export\\s+(?:declare\\s+)?type\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "type",
+      "scope": "top"
+    },
+    {
+      "kind": "module",
+      "pattern": "^\\s*export\\s+(?:declare\\s+)?namespace\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "namespace",
+      "scope": "top",
+      "opens": true
+    },
+    {
+      "kind": "function",
+      "pattern": "^\\s*(?:declare\\s+)?function\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "function",
+      "scope": "top",
+      "continueUntil": ";{"
+    },
+    {
+      "kind": "class",
+      "pattern": "^\\s*(?:declare\\s+)?class\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "class",
+      "scope": "top",
+      "opens": true
+    },
+    {
+      "kind": "interface",
+      "pattern": "^\\s*(?:declare\\s+)?interface\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "interface",
+      "scope": "top",
+      "opens": true
+    },
+    {
+      "kind": "function",
+      "pattern": "^(?:async\\s+)?function\\s*\\*?\\s*(?P<name>[A-Za-z_$][\\w$]*).*",
+      "hint": "function",
+      "scope": "top",
+      "local": true
+    },
+    {
+      "kind": "variable",
+      "pattern": "^(?:const|let|var)\\s+(?P<name>[A-Za-z_$][\\w$]*).*",
+      "scope": "top",
+      "local": true
+    },
+    {
+      "kind": "method",
+      "pattern": "^\\s+(?:(?:public|private|protected|static|async|readonly|abstract|override|get|set)\\s+)*(?P<name>[A-Za-z_$][\\w$]*)\\??\\s*(?:<[^>]*>)?\\s*\\(.*",
+      "hint": "(",
+      "scope": "container"
+    },
+    {
+      "kind": "property",
+      "pattern": "^\\s+(?:(?:public|private|protected|static|readonly|declare)\\s+)*(?P<name>[A-Za-z_$][\\w$]*)\\??\\s*:.*",
+      "hint": ":",
+      "scope": "container"
+    }
+  ],
+  "imports": [
+    {
+      "pattern": "import\\s+(?:type\\s+)?\\*\\s+as\\s+(?P<alias>[\\w$]+)\\s+from\\s+['\\\"](?P<module>[^'\\\"]+)['\\\"]",
+      "hint": "import"
+    },
+    {
+      "pattern": "import\\s+(?:type\\s+)?(?:[\\w$]+\\s*,\\s*)?\\{(?P<names>[^}]*)\\}\\s*from\\s+['\\\"](?P<module>[^'\\\"]+)['\\\"]",
+      "hint": "import"
+    },
+    {
+      "pattern": "import\\s+(?P<alias>[\\w$]+)\\s*(?:,\\s*\\{[^}]*\\}\\s*)?from\\s+['\\\"](?P<module>[^'\\\"]+)['\\\"]",
+      "hint": "import"
+    },
+    {
+      "pattern": "(?:const|let|var)\\s+(?P<alias>[\\w$]+)\\s*=\\s*require\\(\\s*['\\\"](?P<module>[^'\\\"]+)['\\\"]\\s*\\)",
+      "hint": "require"
+    },
+    {
+      "pattern": "(?:const|let|var)\\s+\\{(?P<names>[^}]*)\\}\\s*=\\s*require\\(\\s*['\\\"](?P<module>[^'\\\"]+)['\\\"]\\s*\\)",
+      "hint": "require"
+    }
+  ],
+  "reexports": [
+    "^\\s*export\\s+\\*\\s+from\\s+['\\\"](?P<rel>\\.[^'\\\"]+)['\\\"]",
+    "^\\s*export\\s+\\*\\s+from\\s+['\\\"](?P<module>[^.'\\\"][^'\\\"]*)['\\\"]"
+  ],
+  "importPathContext": "(?:from|import|require\\()\\s*['\\\"](?P<partial>[^'\\\"]*)$",
+  "localResolve": [
+    "{module}.ts",
+    "{module}.tsx",
+    "{module}.d.ts",
+    "{module}.js",
+    "{module}.mjs",
+    "{module}/index.ts",
+    "{module}/index.js",
+    "{module}"
+  ]
+}

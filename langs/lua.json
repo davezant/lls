@@ -1,0 +1,101 @@
+{
+  "name": "lua",
+  "description": "Lua. Index the standard library with scripts/introspect/lua.lua and Lua sources (e.g. /usr/share/lua/5.x) by scanning.",
+  "languageIds": [
+    "lua"
+  ],
+  "extensions": [
+    ".lua"
+  ],
+  "source": {
+    "extensions": [
+      ".lua"
+    ],
+    "excludeDirs": [
+      "test",
+      "tests",
+      "spec",
+      ".*"
+    ]
+  },
+  "module": {
+    "mode": "file",
+    "separator": ".",
+    "indexNames": [
+      "init"
+    ],
+    "submodules": true
+  },
+  "visibility": "all",
+  "lineComments": [
+    "---",
+    "--"
+  ],
+  "memberSeparators": [
+    ".",
+    ":"
+  ],
+  "keywords": [
+    "and",
+    "break",
+    "do",
+    "else",
+    "elseif",
+    "end",
+    "false",
+    "for",
+    "function",
+    "goto",
+    "if",
+    "in",
+    "local",
+    "nil",
+    "not",
+    "or",
+    "repeat",
+    "return",
+    "then",
+    "true",
+    "until",
+    "while",
+    "self"
+  ],
+  "autoload": [
+    "_G"
+  ],
+  "symbols": [
+    {
+      "kind": "function",
+      "pattern": "^function\\s+(?:[\\w.]+[.:])?(?P<name>\\w+)\\s*\\(.*",
+      "hint": "function"
+    },
+    {
+      "kind": "function",
+      "pattern": "^[\\w]+\\.(?P<name>\\w+)\\s*=\\s*function\\s*\\(.*",
+      "hint": "function"
+    },
+    {
+      "kind": "function",
+      "pattern": "^local\\s+function\\s+(?P<name>\\w+)\\s*\\(.*",
+      "hint": "function",
+      "local": true
+    },
+    {
+      "kind": "variable",
+      "pattern": "^local\\s+(?P<name>\\w+)\\s*=.*",
+      "hint": "local",
+      "local": true
+    }
+  ],
+  "imports": [
+    {
+      "pattern": "local\\s+(?P<alias>\\w+)\\s*=\\s*require\\s*\\(?\\s*['\\\"](?P<module>[^'\\\"]+)['\\\"]",
+      "hint": "require"
+    }
+  ],
+  "importPathContext": "require\\s*\\(?\\s*['\\\"](?P<partial>[^'\\\"]*)$",
+  "localResolve": [
+    "{path}.lua",
+    "{path}/init.lua"
+  ]
+}

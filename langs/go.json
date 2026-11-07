@@ -1,0 +1,158 @@
+{
+  "name": "go",
+  "description": "Go. Index $(go env GOROOT)/src and, optionally, module cache directories.",
+  "languageIds": [
+    "go"
+  ],
+  "extensions": [
+    ".go"
+  ],
+  "source": {
+    "extensions": [
+      ".go"
+    ],
+    "excludeDirs": [
+      "testdata",
+      "internal",
+      "vendor",
+      "cmd",
+      ".*",
+      "_*"
+    ],
+    "excludeFiles": [
+      "*_test.go"
+    ]
+  },
+  "module": {
+    "mode": "dir",
+    "separator": "/",
+    "aliasSkip": "^v\\d+$"
+  },
+  "visibility": "uppercase",
+  "visibilityExempt": [
+    "builtin"
+  ],
+  "lineComments": [
+    "//"
+  ],
+  "blockComment": [
+    "/*",
+    "*/"
+  ],
+  "detailStrip": [
+    "\\s*\\{.*$"
+  ],
+  "memberSeparators": [
+    "."
+  ],
+  "keywords": [
+    "break",
+    "case",
+    "chan",
+    "const",
+    "continue",
+    "default",
+    "defer",
+    "else",
+    "fallthrough",
+    "for",
+    "func",
+    "go",
+    "goto",
+    "if",
+    "import",
+    "interface",
+    "map",
+    "package",
+    "range",
+    "return",
+    "select",
+    "struct",
+    "switch",
+    "type",
+    "var"
+  ],
+  "autoload": [
+    "builtin"
+  ],
+  "blocks": {
+    "const": {
+      "start": "^const\\s*\\(\\s*$",
+      "end": "^\\)"
+    },
+    "var": {
+      "start": "^var\\s*\\(\\s*$",
+      "end": "^\\)"
+    },
+    "type": {
+      "start": "^type\\s*\\(\\s*$",
+      "end": "^\\)"
+    }
+  },
+  "symbols": [
+    {
+      "kind": "method",
+      "pattern": "^func\\s*\\(\\s*\\w*\\s*\\*?\\s*(?P<container>\\w+)(?:\\[[^\\]]*\\])?\\s*\\)\\s*(?P<name>\\w+).*",
+      "hint": "func"
+    },
+    {
+      "kind": "function",
+      "pattern": "^func\\s+(?P<name>\\w+).*",
+      "hint": "func"
+    },
+    {
+      "kind": "struct",
+      "pattern": "^type\\s+(?P<name>\\w+)(?:\\[[^\\]]*\\])?\\s+struct\\b.*",
+      "hint": "struct"
+    },
+    {
+      "kind": "interface",
+      "pattern": "^type\\s+(?P<name>\\w+)(?:\\[[^\\]]*\\])?\\s+interface\\b.*",
+      "hint": "interface"
+    },
+    {
+      "kind": "class",
+      "pattern": "^type\\s+(?P<name>\\w+).*",
+      "hint": "type"
+    },
+    {
+      "kind": "constant",
+      "pattern": "^const\\s+(?P<name>\\w+).*",
+      "hint": "const"
+    },
+    {
+      "kind": "variable",
+      "pattern": "^var\\s+(?P<name>\\w+).*",
+      "hint": "var"
+    },
+    {
+      "kind": "constant",
+      "pattern": "^\\s+(?P<name>\\w+)\\b.*",
+      "block": "const"
+    },
+    {
+      "kind": "variable",
+      "pattern": "^\\s+(?P<name>\\w+)\\b.*",
+      "block": "var"
+    },
+    {
+      "kind": "class",
+      "pattern": "^\\s+(?P<name>\\w+)\\s.*",
+      "block": "type"
+    }
+  ],
+  "imports": [
+    {
+      "pattern": "^[ \\t]*import[ \\t]+(?:(?P<alias>[\\w.]+)[ \\t]+)?\\\"(?P<module>[^\\\"]+)\\\"",
+      "hint": "import",
+      "alias": "last"
+    },
+    {
+      "pattern": "^[ \\t]+(?:(?P<alias>[\\w.]+)[ \\t]+)?\\\"(?P<module>[^\\\"]+)\\\"[ \\t]*(?://.*)?$",
+      "hint": "\"",
+      "alias": "last"
+    }
+  ],
+  "importPathContext": "^\\s*(?:import\\s+)?(?:[\\w.]+\\s+)?\\\"(?P<partial>[^\\\"]*)$",
+  "localResolve": []
+}

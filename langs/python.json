@@ -1,0 +1,168 @@
+{
+  "name": "python",
+  "description": "Python 3. Index the stdlib with scripts/introspect/python.py (covers C modules such as builtins, math, sys) plus source scanning of site-packages.",
+  "languageIds": [
+    "python"
+  ],
+  "extensions": [
+    ".py",
+    ".pyi",
+    ".pyw"
+  ],
+  "source": {
+    "extensions": [
+      ".pyi",
+      ".py"
+    ],
+    "excludeDirs": [
+      "test",
+      "tests",
+      "testing",
+      "__pycache__",
+      "idlelib",
+      "lib2to3",
+      "turtledemo",
+      "site-packages",
+      "dist-packages",
+      "*.dist-info",
+      "*.egg-info",
+      "node_modules",
+      ".*"
+    ],
+    "excludeFiles": [
+      "test_*.py",
+      "*_test.py",
+      "conftest.py",
+      "setup.py"
+    ]
+  },
+  "module": {
+    "mode": "file",
+    "separator": ".",
+    "indexNames": [
+      "__init__"
+    ],
+    "submodules": true,
+    "private": true
+  },
+  "visibility": "no-underscore",
+  "lineComments": [
+    "#"
+  ],
+  "docstrings": true,
+  "memberSeparators": [
+    "."
+  ],
+  "keywords": [
+    "False",
+    "None",
+    "True",
+    "and",
+    "as",
+    "assert",
+    "async",
+    "await",
+    "break",
+    "class",
+    "continue",
+    "def",
+    "del",
+    "elif",
+    "else",
+    "except",
+    "finally",
+    "for",
+    "from",
+    "global",
+    "if",
+    "import",
+    "in",
+    "is",
+    "lambda",
+    "nonlocal",
+    "not",
+    "or",
+    "pass",
+    "raise",
+    "return",
+    "try",
+    "while",
+    "with",
+    "yield",
+    "match",
+    "case",
+    "self",
+    "cls"
+  ],
+  "autoload": [
+    "builtins"
+  ],
+  "symbols": [
+    {
+      "kind": "class",
+      "pattern": "^class\\s+(?P<name>[A-Za-z_]\\w*)[^:]*",
+      "hint": "class",
+      "scope": "top",
+      "opens": true,
+      "continueUntil": ":"
+    },
+    {
+      "kind": "function",
+      "pattern": "^(?:async\\s+)?def\\s+(?P<name>[A-Za-z_]\\w*)\\s*\\(.*",
+      "hint": "def",
+      "scope": "top",
+      "continueUntil": ":"
+    },
+    {
+      "kind": "method",
+      "pattern": "^\\s+(?:async\\s+)?def\\s+(?P<name>[A-Za-z_]\\w*)\\s*\\(.*",
+      "hint": "def",
+      "scope": "container",
+      "continueUntil": ":"
+    },
+    {
+      "kind": "field",
+      "pattern": "^\\s+(?P<name>[A-Za-z_]\\w*)\\s*:\\s*[\\w\\[\\]., |\\\"']+(?:=.*)?$",
+      "hint": ":",
+      "scope": "container"
+    },
+    {
+      "kind": "constant",
+      "pattern": "^(?P<name>[A-Z][A-Z0-9_]*)\\s*(?::[^=]+)?=[^=].*",
+      "hint": "=",
+      "scope": "top"
+    },
+    {
+      "kind": "variable",
+      "pattern": "^(?P<name>[A-Za-z_]\\w*)\\s*(?::[^=]+)?=[^=].*",
+      "hint": "=",
+      "scope": "top"
+    }
+  ],
+  "imports": [
+    {
+      "pattern": "^[ \\t]*import[ \\t]+(?P<module>[\\w.]+(?:[ \\t]+as[ \\t]+\\w+)?(?:[ \\t]*,[ \\t]*[\\w.]+(?:[ \\t]+as[ \\t]+\\w+)?)*)",
+      "hint": "import",
+      "alias": "module"
+    },
+    {
+      "pattern": "^[ \\t]*from[ \\t]+(?P<module>[A-Za-z_][\\w.]*)[ \\t]+import[ \\t]+(?P<names>\\([^)]*\\)|[^\\n#;]+)",
+      "hint": "from"
+    },
+    {
+      "pattern": "^[ \\t]*from[ \\t]+(?P<rel>\\.+[\\w.]*)[ \\t]+import[ \\t]+(?P<names>\\([^)]*\\)|[^\\n#;]+)",
+      "hint": "from"
+    }
+  ],
+  "reexports": [
+    "^from\\s+(?P<rel>\\.[\\w.]*)\\s+import\\s+\\*",
+    "^from\\s+(?P<module>[A-Za-z_][\\w.]*)\\s+import\\s+\\*"
+  ],
+  "importPathContext": "^\\s*(?:from|import)\\s+(?P<partial>[\\w.]*)$",
+  "importNameContext": "^\\s*from\\s+(?P<module>[\\w.]+)\\s+import\\s+(?:.*,\\s*)?\\(?\\s*(?P<partial>\\w*)$",
+  "localResolve": [
+    "{path}.py",
+    "{path}/__init__.py",
+    "{path}.pyi"
+  ]
+}

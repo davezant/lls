@@ -1,0 +1,181 @@
+{
+  "name": "rust",
+  "description": "Rust (best effort). Index $(rustc --print sysroot)/lib/rustlib/src/rust/library and crate sources from ~/.cargo/registry/src.",
+  "languageIds": [
+    "rust"
+  ],
+  "extensions": [
+    ".rs"
+  ],
+  "source": {
+    "extensions": [
+      ".rs"
+    ],
+    "excludeDirs": [
+      "tests",
+      "benches",
+      "examples",
+      "target",
+      ".*"
+    ]
+  },
+  "module": {
+    "mode": "file",
+    "separator": "::",
+    "indexNames": [
+      "mod",
+      "lib"
+    ],
+    "dropSegments": [
+      "src"
+    ],
+    "submodules": true
+  },
+  "visibility": "all",
+  "lineComments": [
+    "///",
+    "//!",
+    "//"
+  ],
+  "blockComment": [
+    "/*",
+    "*/"
+  ],
+  "detailStrip": [
+    "\\s*\\{.*$",
+    "\\s+where\\s.*$"
+  ],
+  "memberSeparators": [
+    "::",
+    "."
+  ],
+  "keywords": [
+    "as",
+    "async",
+    "await",
+    "break",
+    "const",
+    "continue",
+    "crate",
+    "dyn",
+    "else",
+    "enum",
+    "extern",
+    "false",
+    "fn",
+    "for",
+    "if",
+    "impl",
+    "in",
+    "let",
+    "loop",
+    "match",
+    "mod",
+    "move",
+    "mut",
+    "pub",
+    "ref",
+    "return",
+    "self",
+    "Self",
+    "static",
+    "struct",
+    "super",
+    "trait",
+    "true",
+    "type",
+    "unsafe",
+    "use",
+    "where",
+    "while"
+  ],
+  "symbols": [
+    {
+      "kind": "struct",
+      "pattern": "^\\s*impl(?:<[^>]*>)?\\s+(?:[\\w:<>, ]+\\s+for\\s+)?(?P<name>\\w+)[^;]*\\{\\s*$",
+      "hint": "impl",
+      "scope": "top",
+      "opens": true,
+      "emit": false
+    },
+    {
+      "kind": "interface",
+      "pattern": "^\\s*pub(?:\\([^)]*\\))?\\s+(?:unsafe\\s+)?trait\\s+(?P<name>\\w+).*",
+      "hint": "trait",
+      "scope": "top",
+      "opens": true
+    },
+    {
+      "kind": "struct",
+      "pattern": "^\\s*pub(?:\\([^)]*\\))?\\s+struct\\s+(?P<name>\\w+).*",
+      "hint": "struct",
+      "scope": "top"
+    },
+    {
+      "kind": "enum",
+      "pattern": "^\\s*pub(?:\\([^)]*\\))?\\s+enum\\s+(?P<name>\\w+).*",
+      "hint": "enum",
+      "scope": "top"
+    },
+    {
+      "kind": "class",
+      "pattern": "^\\s*pub(?:\\([^)]*\\))?\\s+type\\s+(?P<name>\\w+).*",
+      "hint": "type",
+      "scope": "top"
+    },
+    {
+      "kind": "constant",
+      "pattern": "^\\s*pub(?:\\([^)]*\\))?\\s+(?:const|static)\\s+(?:mut\\s+)?(?P<name>\\w+).*",
+      "hint": "pub",
+      "scope": "top"
+    },
+    {
+      "kind": "function",
+      "pattern": "^\\s*pub(?:\\([^)]*\\))?\\s+(?:const\\s+)?(?:async\\s+)?(?:unsafe\\s+)?(?:extern\\s+\\\"[^\\\"]*\\\"\\s+)?fn\\s+(?P<name>\\w+).*",
+      "hint": "fn",
+      "scope": "top",
+      "continueUntil": "{;"
+    },
+    {
+      "kind": "function",
+      "pattern": "^\\s*macro_rules!\\s*(?P<name>\\w+).*",
+      "hint": "macro_rules",
+      "scope": "top"
+    },
+    {
+      "kind": "method",
+      "pattern": "^\\s+(?:pub(?:\\([^)]*\\))?\\s+)?(?:const\\s+)?(?:async\\s+)?(?:unsafe\\s+)?fn\\s+(?P<name>\\w+).*",
+      "hint": "fn",
+      "scope": "container",
+      "continueUntil": "{;"
+    },
+    {
+      "kind": "function",
+      "pattern": "^\\s*(?:const\\s+)?(?:async\\s+)?(?:unsafe\\s+)?fn\\s+(?P<name>\\w+).*",
+      "hint": "fn",
+      "scope": "top",
+      "local": true
+    },
+    {
+      "kind": "struct",
+      "pattern": "^\\s*(?:struct|enum|trait)\\s+(?P<name>\\w+).*",
+      "scope": "top",
+      "local": true
+    }
+  ],
+  "imports": [
+    {
+      "pattern": "^\\s*(?:pub\\s+)?use\\s+(?P<module>[\\w:]+)::\\{(?P<names>[^}]*)\\}",
+      "hint": "use"
+    },
+    {
+      "pattern": "^\\s*(?:pub\\s+)?use\\s+(?P<module>[\\w:]+)::(?P<names>\\w+(?:\\s+as\\s+\\w+)?|\\*)\\s*;",
+      "hint": "use"
+    }
+  ],
+  "importPathContext": "^\\s*(?:pub\\s+)?use\\s+(?P<partial>[\\w:]*)$",
+  "localResolve": [
+    "{module}.rs",
+    "{module}/mod.rs"
+  ]
+}

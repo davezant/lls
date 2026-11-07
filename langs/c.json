@@ -1,0 +1,164 @@
+{
+  "name": "c",
+  "description": "C / C++ headers. Index /usr/include (and any other include directory). #include brings a header and the headers it includes into scope.",
+  "languageIds": [
+    "c",
+    "cpp",
+    "objc",
+    "objcpp"
+  ],
+  "extensions": [
+    ".c",
+    ".h",
+    ".cc",
+    ".cpp",
+    ".cxx",
+    ".hpp",
+    ".hh",
+    ".hxx",
+    ".m"
+  ],
+  "source": {
+    "extensions": [
+      ".h",
+      ".hpp",
+      ".hh",
+      ".hxx"
+    ],
+    "excludeDirs": [
+      ".*"
+    ]
+  },
+  "module": {
+    "mode": "file-ext"
+  },
+  "visibility": "no-underscore",
+  "lineComments": [
+    "///",
+    "//"
+  ],
+  "blockComment": [
+    "/*",
+    "*/"
+  ],
+  "detailStrip": [
+    "\\b__\\w+\\s*\\(\\(.*?\\)\\)",
+    "\\b__attribute__\\s*\\(\\(.*?\\)\\)",
+    "\\b__(?:THROW|THROWNL|wur|restrict|BEGIN_DECLS|END_DECLS|extension__)\\b",
+    "\\b__[a-z_]+__\\b",
+    "^\\s*extern\\s+",
+    "\\bextern\\s+\\\"C\\\"\\s*"
+  ],
+  "memberSeparators": [
+    ".",
+    "->",
+    "::"
+  ],
+  "keywords": [
+    "auto",
+    "break",
+    "case",
+    "char",
+    "const",
+    "continue",
+    "default",
+    "do",
+    "double",
+    "else",
+    "enum",
+    "extern",
+    "float",
+    "for",
+    "goto",
+    "if",
+    "inline",
+    "int",
+    "long",
+    "register",
+    "restrict",
+    "return",
+    "short",
+    "signed",
+    "sizeof",
+    "static",
+    "struct",
+    "switch",
+    "typedef",
+    "union",
+    "unsigned",
+    "void",
+    "volatile",
+    "while",
+    "bool",
+    "true",
+    "false",
+    "NULL",
+    "class",
+    "namespace",
+    "template",
+    "typename",
+    "public",
+    "private",
+    "protected",
+    "virtual",
+    "nullptr",
+    "new",
+    "delete",
+    "this",
+    "operator",
+    "using"
+  ],
+  "symbols": [
+    {
+      "kind": "constant",
+      "pattern": "^\\s*#\\s*define\\s+(?P<name>[A-Za-z_]\\w*)(?:\\([^)]*\\))?.*",
+      "hint": "define"
+    },
+    {
+      "kind": "struct",
+      "pattern": "^(?:typedef\\s+)?(?:struct|union|class)\\s+(?P<name>[A-Za-z_]\\w*)\\s*(?:\\{.*)?$",
+      "hint": ""
+    },
+    {
+      "kind": "enum",
+      "pattern": "^(?:typedef\\s+)?enum\\s+(?:class\\s+)?(?P<name>[A-Za-z_]\\w*)\\s*(?:\\{.*)?$",
+      "hint": "enum"
+    },
+    {
+      "kind": "class",
+      "pattern": "^typedef\\s+[^;(]*?\\b(?P<name>[A-Za-z_]\\w*)\\s*(?:\\[[^\\]]*\\])?\\s*;",
+      "hint": "typedef"
+    },
+    {
+      "kind": "class",
+      "pattern": "^\\}\\s*(?P<name>[A-Za-z_]\\w*)\\s*;",
+      "hint": "}"
+    },
+    {
+      "kind": "function",
+      "pattern": "^(?:extern\\s+)?(?:(?:static|inline|const|unsigned|signed|struct|enum|long|short|__extension__|__inline)\\s+)*[A-Za-z_]\\w*[\\s\\*]+(?P<name>[A-Za-z_]\\w*)\\s*\\([^;{]*\\)[^;{]*",
+      "hint": "(",
+      "continueUntil": ";{"
+    }
+  ],
+  "imports": [
+    {
+      "pattern": "^[ \\t]*#[ \\t]*include[ \\t]*<(?P<module>[^>]+)>",
+      "hint": "include",
+      "bind": "scope"
+    },
+    {
+      "pattern": "^[ \\t]*#[ \\t]*include[ \\t]*\\\"(?P<rel>[^\\\"]+)\\\"",
+      "hint": "include",
+      "bind": "scope"
+    }
+  ],
+  "reexports": [
+    "^\\s*#\\s*include\\s*<(?P<module>[^>]+)>",
+    "^\\s*#\\s*include\\s*\\\"(?P<rel>[^\\\"]+)\\\""
+  ],
+  "importPathContext": "^\\s*#\\s*include\\s*[<\\\"](?P<partial>[^>\\\"]*)$",
+  "localResolve": [
+    "{module}"
+  ]
+}
