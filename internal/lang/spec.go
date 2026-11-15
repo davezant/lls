@@ -72,6 +72,9 @@ type Spec struct {
 	// module as written, {path} the module with the module separator
 	// replaced by "/".
 	LocalResolve []string `json:"localResolve"`
+
+	// Syntax enables structural syntax checking (see syntax.go).
+	Syntax *SyntaxSpec `json:"syntax"`
 }
 
 // SourceSpec controls which files are read when compiling an index.
@@ -166,6 +169,7 @@ type Lang struct {
 	exempt      map[string]bool
 	keywords    map[string]bool
 	maxDoc      int
+	syntax      *syntax
 }
 
 type symRule struct {
@@ -318,6 +322,9 @@ func Compile(s Spec) (*Lang, error) {
 	l.keywords = make(map[string]bool, len(s.Keywords))
 	for _, k := range s.Keywords {
 		l.keywords[k] = true
+	}
+	if l.syntax, err = compileSyntax(l); err != nil {
+		return nil, err
 	}
 	return l, nil
 }

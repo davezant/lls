@@ -23,6 +23,7 @@ type Server struct {
 	logf     func(format string, args ...any)
 	shutdown bool
 	trace    bool
+	noDiags  bool // syntax diagnostics disabled by the client
 
 	// Last completion list, kept so completionItem/resolve can attach the
 	// documentation lazily instead of sending it for every item.
@@ -127,8 +128,9 @@ type initializeParams struct {
 		URI string `json:"uri"`
 	} `json:"workspaceFolders"`
 	InitializationOptions struct {
-		Home  string `json:"home"`
-		Limit int    `json:"limit"`
+		Home        string `json:"home"`
+		Limit       int    `json:"limit"`
+		Diagnostics *bool  `json:"diagnostics"`
 	} `json:"initializationOptions"`
 }
 
@@ -152,6 +154,10 @@ func (s *Server) handle(msg *message) ([]byte, error) {
 		}
 		if err := json.Unmarshal(msg.Params, &p); err != nil {
 			return nil, err
+		}
+		if d := s.e.Get(p.TextDocument.URI); d != nil && d.Lang.HasSyntax() && !s.noDiags {
+			s.e.Close(p.TextDocument.URI)
+			return nil, s.publishDiagnostics(p.TextDocument.URI, nil, nil)
 		}
 		s.e.Close(p.TextDocument.URI)
 		return nil, nil
@@ -192,6 +198,7 @@ func (s *Server) initialize(raw json.RawMessage) ([]byte, error) {
 	}
 	s.e.SetRoots(roots)
 	s.e.SetLimit(p.InitializationOptions.Limit)
+	s.noDiags = p.InitializationOptions.Diagnostics != nil && !*p.InitializationOptions.Diagnostics
 
 	// Trigger characters: the last byte of every member separator plus the
 	// characters that open module paths.
@@ -247,10 +254,12 @@ func (s *Server) didOpen(raw json.RawMessage) error {
 		return err
 	}
 	td := p.TextDocument
-	if s.e.Open(td.URI, td.LanguageID, td.Version, []byte(td.Text)) == nil {
+	d := s.e.Open(td.URI, td.LanguageID, td.Version, []byte(td.Text))
+	if d == nil {
 		s.logf("lls: no language for %s (%s)", td.URI, td.LanguageID)
+		return nil
 	}
-	return nil
+	return s.check(d)
 }
 
 func (s *Server) didChange(raw json.RawMessage) error {
@@ -277,7 +286,51 @@ func (s *Server) didChange(raw json.RawMessage) error {
 		end := d.Offset(ch.Range.End.Line, ch.Range.End.Character)
 		d.Edit(p.TextDocument.Version, start, end, ch.Text)
 	}
-	return nil
+	return s.check(d)
+}
+
+// check runs the syntax checker on a document and publishes the result.
+func (s *Server) check(d *engine.Document) error {
+	if s.noDiags || !d.Lang.HasSyntax() {
+		return nil
+	}
+	return s.publishDiagnostics(d.URI, &d.Version, d)
+}
+
+// publishDiagnostics sends textDocument/publishDiagnostics; a nil document
+// clears the diagnostics of uri.
+func (s *Server) publishDiagnostics(uri string, version *int32, d *engine.Document) error {
+	b := append([]byte(nil), `{"jsonrpc":"2.0","method":"textDocument/publishDiagnostics","params":{"uri":`...)
+	b = appendString(b, uri)
+	if version != nil {
+		b = append(b, `,"version":`...)
+		b = strconv.AppendInt(b, int64(*version), 10)
+	}
+	b = append(b, `,"diagnostics":[`...)
+	if d != nil {
+		for i, dg := range d.Lang.Check(d.Text) {
+			if i > 0 {
+				b = append(b, ',')
+			}
+			sl, sc := d.Position(dg.Start)
+			el, ec := d.Position(dg.End)
+			b = append(b, `{"range":{"start":{"line":`...)
+			b = strconv.AppendInt(b, int64(sl), 10)
+			b = append(b, `,"character":`...)
+			b = strconv.AppendInt(b, int64(sc), 10)
+			b = append(b, `},"end":{"line":`...)
+			b = strconv.AppendInt(b, int64(el), 10)
+			b = append(b, `,"character":`...)
+			b = strconv.AppendInt(b, int64(ec), 10)
+			b = append(b, `}},"severity":`...)
+			b = strconv.AppendInt(b, int64(dg.Severity), 10)
+			b = append(b, `,"source":"lls","message":`...)
+			b = appendString(b, dg.Message)
+			b = append(b, '}')
+		}
+	}
+	b = append(b, "]}}"...)
+	return s.c.write(b)
 }
 
 func (s *Server) docAt(raw json.RawMessage) (*engine.Document, int, position, error) {

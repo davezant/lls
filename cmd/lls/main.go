@@ -38,6 +38,7 @@ Usage:
   lls build    -l LANG [-r DIR]... [--jsonl FILE]... [-o OUT]    compile an index
   lls complete -l LANG [--file F [--pos L:C] | --stdin | TEXT]   completions at the cursor
   lls hover    -l LANG [--file F --pos L:C | --stdin | TEXT]     describe the symbol at the cursor
+  lls check    [-l LANG] FILE... | -l LANG --stdin               report syntax errors
   lls repl     -l LANG                                           interactive completion shell
   lls inspect  FILE.llsi|LANG [MODULE | PREFIX*]                 browse an index
   lls langs                                                      list languages and installed indexes
@@ -65,6 +66,8 @@ func main() {
 		err = cmdComplete(args)
 	case "hover":
 		err = cmdHover(args)
+	case "check":
+		err = cmdCheck(args)
 	case "repl":
 		err = cmdRepl(args)
 	case "inspect":
@@ -516,6 +519,77 @@ func cmdInspect(args []string) error {
 			}
 		}
 		r.Close()
+	}
+	return nil
+}
+
+// --- check -------------------------------------------------------------------
+
+func cmdCheck(args []string) error {
+	fs := flag.NewFlagSet("check", flag.ExitOnError)
+	langName := fs.String("l", "", "language (spec name or LSP id); inferred from the file name when omitted")
+	stdin := fs.Bool("stdin", false, "read the document from stdin")
+	home := fs.String("home", "", "data directory")
+	fs.Parse(args)
+	files := fs.Args()
+	if !*stdin && len(files) == 0 {
+		return errors.New("check: give files or --stdin")
+	}
+	e, err := newEngine(*home, nil)
+	if err != nil {
+		return err
+	}
+	type input struct {
+		name    string
+		content []byte
+	}
+	var inputs []input
+	if *stdin {
+		b, err := io.ReadAll(os.Stdin)
+		if err != nil {
+			return err
+		}
+		inputs = append(inputs, input{"<stdin>", b})
+	}
+	for _, f := range files {
+		b, err := os.ReadFile(f)
+		if err != nil {
+			return err
+		}
+		inputs = append(inputs, input{f, b})
+	}
+	bw := bufio.NewWriter(os.Stdout)
+	defer bw.Flush()
+	failed := false
+	for _, in := range inputs {
+		uri := "untitled:stdin"
+		if in.name != "<stdin>" {
+			uri = engine.PathToURI(in.name)
+		}
+		d := e.Open(uri, *langName, 1, in.content)
+		if d == nil {
+			return fmt.Errorf("%s: unknown language (use -l, see: lls langs)", in.name)
+		}
+		if !d.Lang.HasSyntax() {
+			fmt.Fprintf(os.Stderr, "lls: %s: language %s has no syntax rules\n", in.name, d.Lang.Name)
+			continue
+		}
+		for _, dg := range d.Lang.Check(in.content) {
+			line, _ := d.Position(dg.Start)
+			col := dg.Start - d.Offset(line, 0) + 1
+			sev := "error"
+			if dg.Severity == lang.SeverityWarning {
+				sev = "warning"
+			} else {
+				failed = true
+			}
+			fmt.Fprintf(bw, "%s:%d:%d: %s: %s\n", in.name, line+1, col, sev, dg.Message)
+		}
+		e.Close(uri)
+	}
+	if failed {
+		bw.Flush()
+		os.Exit(1)
 	}
 	return nil
 }

@@ -247,5 +247,35 @@
     "{module}/index.ts",
     "{module}/index.js",
     "{module}"
-  ]
+  ],
+  "syntax": {
+    "blocks": "braces",
+    "brackets": [
+      "()",
+      "[]",
+      "{}"
+    ],
+    "regexLiterals": true,
+    "strings": [
+      {
+        "open": "\"",
+        "close": "\"",
+        "escape": "\\",
+        "lenient": true
+      },
+      {
+        "open": "'",
+        "close": "'",
+        "escape": "\\",
+        "lenient": true
+      },
+      {
+        "open": "`",
+        "close": "`",
+        "escape": "\\",
+        "multiline": true,
+        "interpolation": "${"
+      }
+    ]
+  }
 }

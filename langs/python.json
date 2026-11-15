@@ -164,5 +164,41 @@
     "{path}.py",
     "{path}/__init__.py",
     "{path}.pyi"
-  ]
+  ],
+  "syntax": {
+    "blocks": "indent",
+    "brackets": [
+      "()",
+      "[]",
+      "{}"
+    ],
+    "indent": {
+      "openers": ":",
+      "continuation": "\\"
+    },
+    "strings": [
+      {
+        "open": "\"\"\"",
+        "close": "\"\"\"",
+        "escape": "\\",
+        "multiline": true
+      },
+      {
+        "open": "'''",
+        "close": "'''",
+        "escape": "\\",
+        "multiline": true
+      },
+      {
+        "open": "\"",
+        "close": "\"",
+        "escape": "\\"
+      },
+      {
+        "open": "'",
+        "close": "'",
+        "escape": "\\"
+      }
+    ]
+  }
 }

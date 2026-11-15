@@ -160,5 +160,27 @@
   "importPathContext": "^\\s*#\\s*include\\s*[<\\\"](?P<partial>[^>\\\"]*)$",
   "localResolve": [
     "{module}"
-  ]
+  ],
+  "syntax": {
+    "blocks": "braces",
+    "brackets": [
+      "()",
+      "[]",
+      "{}"
+    ],
+    "strings": [
+      {
+        "open": "\"",
+        "close": "\"",
+        "escape": "\\"
+      },
+      {
+        "open": "'",
+        "close": "'",
+        "escape": "\\",
+        "notAfterNumber": true
+      }
+    ],
+    "preprocessor": true
+  }
 }

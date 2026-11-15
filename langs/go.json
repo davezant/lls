@@ -154,5 +154,30 @@
     }
   ],
   "importPathContext": "^\\s*(?:import\\s+)?(?:[\\w.]+\\s+)?\\\"(?P<partial>[^\\\"]*)$",
-  "localResolve": []
+  "localResolve": [],
+  "syntax": {
+    "blocks": "braces",
+    "brackets": [
+      "()",
+      "[]",
+      "{}"
+    ],
+    "strings": [
+      {
+        "open": "\"",
+        "close": "\"",
+        "escape": "\\"
+      },
+      {
+        "open": "'",
+        "close": "'",
+        "escape": "\\"
+      },
+      {
+        "open": "`",
+        "close": "`",
+        "multiline": true
+      }
+    ]
+  }
 }

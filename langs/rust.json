@@ -177,5 +177,58 @@
   "localResolve": [
     "{module}.rs",
     "{module}/mod.rs"
-  ]
+  ],
+  "syntax": {
+    "blocks": "braces",
+    "brackets": [
+      "()",
+      "[]",
+      "{}"
+    ],
+    "nestedComments": true,
+    "strings": [
+      {
+        "open": "br##\"",
+        "close": "\"##",
+        "multiline": true
+      },
+      {
+        "open": "br#\"",
+        "close": "\"#",
+        "multiline": true
+      },
+      {
+        "open": "br\"",
+        "close": "\"",
+        "multiline": true
+      },
+      {
+        "open": "r##\"",
+        "close": "\"##",
+        "multiline": true
+      },
+      {
+        "open": "r#\"",
+        "close": "\"#",
+        "multiline": true
+      },
+      {
+        "open": "r\"",
+        "close": "\"",
+        "multiline": true
+      },
+      {
+        "open": "\"",
+        "close": "\"",
+        "escape": "\\",
+        "multiline": true
+      },
+      {
+        "open": "'",
+        "close": "'",
+        "escape": "\\",
+        "char": true
+      }
+    ]
+  }
 }

@@ -97,5 +97,76 @@
   "localResolve": [
     "{path}.lua",
     "{path}/init.lua"
-  ]
+  ],
+  "syntax": {
+    "blocks": "keywords",
+    "brackets": [
+      "()",
+      "[]",
+      "{}"
+    ],
+    "blockComments": [
+      [
+        "--[==[",
+        "]==]"
+      ],
+      [
+        "--[=[",
+        "]=]"
+      ],
+      [
+        "--[[",
+        "]]"
+      ]
+    ],
+    "strings": [
+      {
+        "open": "[==[",
+        "close": "]==]",
+        "multiline": true
+      },
+      {
+        "open": "[=[",
+        "close": "]=]",
+        "multiline": true
+      },
+      {
+        "open": "[[",
+        "close": "]]",
+        "multiline": true
+      },
+      {
+        "open": "\"",
+        "close": "\"",
+        "escape": "\\",
+        "spaceEscapes": "z"
+      },
+      {
+        "open": "'",
+        "close": "'",
+        "escape": "\\",
+        "spaceEscapes": "z"
+      }
+    ],
+    "keywords": [
+      {
+        "open": [
+          "function",
+          "if",
+          "do"
+        ],
+        "close": [
+          "end"
+        ]
+      },
+      {
+        "open": [
+          "repeat"
+        ],
+        "close": [
+          "until"
+        ]
+      }
+    ]
+  }
 }

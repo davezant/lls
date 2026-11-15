@@ -46,6 +46,7 @@ lls complete -l python 'os.path.jo'
 lls complete --file main.c --pos 12:7
 printf '#include <string.h>\nstrc' | lls complete -l c --stdin
 lls hover -l go 'strings.Builder'
+lls check main.py util.lua      # syntax errors as file:line:col (exit 1 on errors)
 lls repl -l python              # interactive; import lines extend the context
 lls inspect go 'net/http*'      # browse modules / symbols of an index
 lls bench -l python 'os.path.jo'
@@ -65,8 +66,36 @@ build the indexes on the Pi itself.
 
 Supported requests: completion (+ resolve), hover, signatureHelp,
 definition (buffer and project files), documentSymbol, and incremental sync.
-Options (`initializationOptions`) are `{"limit": 100}`. Server flags are
+Syntax errors are pushed with `textDocument/publishDiagnostics` on every
+open/change. Options (`initializationOptions`) are `{"limit": 100}` and
+`{"diagnostics": false}` to turn syntax checking off. Server flags are
 `--home`, `--log FILE` and `--trace`, which logs the duration of each request.
+
+## Syntax checking
+
+Every spec has a `syntax` section describing the structure of the language,
+so checking stays language-agnostic and needs no grammar. The checker is a
+single pass that skips comments and literals and tracks open blocks. It reports:
+
+* unbalanced or mismatched brackets (`"(" was never closed`, `unexpected "]"`);
+* unterminated strings and block comments;
+* unclosed keyword blocks (Lua `function` ... `end`, `repeat` ... `until`);
+* indentation errors (Python: missing indented block, unexpected indent,
+  dedent to an unknown level, tabs mixed with spaces).
+
+| field | purpose |
+|---|---|
+| `blocks` | `braces`, `indent` or `keywords` |
+| `brackets` | pairs such as `["()", "[]", "{}"]` |
+| `strings[]` | `{open, close, escape, multiline, char, lenient, interpolation, spaceEscapes, notAfterNumber}` |
+| `blockComments`, `nestedComments` | extra comment pairs (Lua `--[[ ]]`), nesting (Rust) |
+| `indent` | `{openers: ":", continuation: "\\", tabWidth: 8}` for `blocks: indent` |
+| `keywords[]` | `{open: ["function", "if", "do"], close: ["end"]}` for `blocks: keywords` |
+| `regexLiterals`, `preprocessor` | JS `/regex/` literals; C `#if/#else/#endif` branches |
+
+On the Python stdlib, `$GOROOT/src`, Rust crates, Lua and node_modules code it
+reports no false positives. In `/usr/include`, 4 of about 5000 headers get
+diagnostics, mostly real unbalanced macros or unusual preprocessor layouts.
 
 ## Adding a language
 
@@ -92,9 +121,9 @@ format is one record per line:
 ## Layout
 
 ```
-cmd/lls            CLI (serve, build, complete, hover, repl, inspect, bench)
+cmd/lls            CLI (serve, build, complete, hover, check, repl, inspect, bench)
 internal/index     .llsi format: writer, mmap reader (format doc in format.go)
-internal/lang      spec loading, line-based extractor, imports, module naming
+internal/lang      spec loading, line-based extractor, imports, module naming, syntax checker
 internal/build     parallel index compiler
 internal/engine    documents, analysis, completion/hover/signature/definition
 internal/lsp       JSON-RPC transport + handlers (hand-written JSON on hot paths)
@@ -104,7 +133,9 @@ scripts/           build-index.sh, build-all.sh, cross-compile.sh, introspect/
 
 ## Limitations
 
-There is no type inference. `obj.` completes from module and class members
+The syntax checker is structural, not a full parser: it does not catch
+invalid expressions or misplaced keywords, only broken structure. There is
+no type inference. `obj.` completes from module and class members
 when the receiver can be resolved, and otherwise from names used after `.` in
 open buffers. Rust support is best effort, because std re-exports are not
 followed by name. C++ headers without an extension (`<vector>`) are not
